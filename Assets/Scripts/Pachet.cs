@@ -28,7 +28,7 @@ public class Pachet : MonoBehaviour
   {
 
     Amestecare(cartiLibere, marime);
-    Impartire(cartiLibere, marime, playerNumber, playerOrder);
+    Impartire(cartiLibere, playerNumber, playerOrder);
     atuu = cartiLibere[marime - 1];
     ultimaCarte = cartiLibere[marime - 2];
     cartiLibere[marime - 2] = null;
@@ -59,7 +59,7 @@ public class Pachet : MonoBehaviour
   }
 
   // functie de impartit
-  void Impartire(string[] cartiLibere, int marime, int playerNumber, GameObject[] playerOrder){
+  void Impartire(string[] cartiLibere, int playerNumber, GameObject[] playerOrder){
     for(int i = 0; i < playerNumber; i++)
       for(int j = 0; j < 5; j++){
         playerOrder[i].GetComponent<Player>().mana[j] = cartiLibere[marime - 1];
