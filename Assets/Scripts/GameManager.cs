@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 
     public Pachet pachetManager;
 
+    public Card carteJos;
+
     int turn = 0;
 
     // Start is called before the first frame update
@@ -27,8 +29,13 @@ public class GameManager : MonoBehaviour
 
       pachetManager.Initiere(playerNumber, playerOrder);
 
+      carteJos.GetCardTexture(pachetManager.ultimaCarte);
+      // Instantiate(carteJos, new Vector3(0f, 1f, 0f));
+
       // randomizam jucatorul care incepe
       turn = Random.Range(0, playerNumber);
+
+
 
     }
     
@@ -62,6 +69,7 @@ public class GameManager : MonoBehaviour
       // schimbam culoarea jucatorului curent
       playerOrder[turn].GetComponent<MeshRenderer>().material = playerOrder[turn].GetComponent<Player>().selectedColor;
 
+      
 
     }
 
