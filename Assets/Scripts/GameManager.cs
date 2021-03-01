@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     {
 
       for(int i = 0; i < playerNumber; i++){
-        gigel = Instantiate(playerCapsule, new Vector3(i*2, 4.43f, 0), Quaternion.identity);
+        gigel = Instantiate(playerCapsule, new Vector3(Mathf.Cos(2f * i * Mathf.PI / playerNumber) * 10f, 1f, Mathf.Sin(2f * i * Mathf.PI / playerNumber) * 8f), Quaternion.identity);
         playerOrder[i] = gigel;
 
       }
@@ -32,16 +32,17 @@ public class GameManager : MonoBehaviour
 
     }
     
+  
+    public void NextPlayer()
+    {
+      PlayTurn(playerOrder, turn);
+
+      turn = (turn+1) % playerNumber;
+    }
+
     // Update is called once per frame
     void Update()
     {
-
-      if(Input.GetKeyDown("space")){
-        PlayTurn(playerOrder, turn);
-
-        turn = (turn+1) % playerNumber;
-
-      }
 
     }
 
