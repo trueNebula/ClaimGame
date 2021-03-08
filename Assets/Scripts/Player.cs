@@ -9,16 +9,13 @@ public class Player : MonoBehaviour
 
     public string[] mana = new string[5];
 
-    // Start is called before the first frame update
-    void Start()
-    {
-      this.GetComponent<MeshRenderer>().material = defaultColor;
+    public int marimeMana = 5;
 
-    }
 
-    // Update is called once per frame
-    void Update()
+    public void GolireSlotMana(int poz)
     {
-        
+        mana[poz] = mana[marimeMana - 1];
+        mana[marimeMana - 1] = null;
+        marimeMana--;
     }
 }

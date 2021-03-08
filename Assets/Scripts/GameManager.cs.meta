@@ -3,7 +3,11 @@ guid: ef53aba6704a615479ece52251ebfa53
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - playerCapsule: {fileID: 2907931605299904746, guid: 65b74d52e8be8df41a3c3d0bd1dfa6b9,
+      type: 3}
+  - pachetManager: {instanceID: 0}
+  - carteJos: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

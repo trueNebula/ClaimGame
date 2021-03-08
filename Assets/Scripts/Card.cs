@@ -10,8 +10,11 @@ public class Card : MonoBehaviour
     public Texture[] Trefla = new Texture[13];
     public Texture[] Spade = new Texture[13];
     public Renderer m_Renderer;
+    //obiectele pt texturile cartilor
+    public GameObject CarteJos, Atuu;
+    public GameObject[] cartiJucatorCurent = new GameObject[5];
+    public bool[] isSelected = new bool[] {false, false, false, false, false};
 
-    public string CarteCurenta;
 
 
     // convertim un caracter c ca numar din baza 16 in baza 10
@@ -29,7 +32,11 @@ public class Card : MonoBehaviour
 
     }
 
-    public void GetCardTexture(string carte){
+
+
+
+    public void GetCardTexture(string carte, GameObject obiectCarte)
+    {
       // locul din array unde se afla textura cartii
       int index = ConvertBase16(carte[0]) - 1;
 
@@ -59,28 +66,16 @@ public class Card : MonoBehaviour
           break;
       }
 
-      m_Renderer.materials[1].SetTexture("_BaseMap", MainTexture);
+      obiectCarte.GetComponent<Renderer>().materials[1].SetTexture("_BaseMap", MainTexture);
 
     }
 
-    void Start()
+
+    //resetare vector auxiliar de selectie
+    public void Reset()
     {
-
-      m_Renderer = this.GetComponent<Renderer>();
-      
-
-    }
-
-    void Update()
-    {
-      
-
-      // if(Input.GetKeyDown("space")){
-      //   m_Renderer.materials[1].SetTexture("_BaseMap", MainTexture);
-      //   Debug.Log(m_Renderer.materials[1]);
-
-      // }
-
+      for(int i = 0; i <= 4; i++)
+        isSelected[i] = false;
     }
 
 }

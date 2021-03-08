@@ -11,7 +11,7 @@ public class Pachet : MonoBehaviour
   // B = Juvete
   // C = Queen
   // D = King
-  string[] cartiLibere = {
+  public string[] cartiLibere = {
                 "1@", "2@", "3@", "4@", "5@", "6@", "7@", "8@", "9@", "A@", "B@", "C@", "D@", 
                 "1%", "2%", "3%", "4%", "5%", "6%", "7%", "8%", "9%", "A%", "B%", "C%", "D%", 
                 "1#", "2#", "3#", "4#", "5#", "6#", "7#", "8#", "9#", "A#", "B#", "C#", "D#", 
@@ -19,30 +19,32 @@ public class Pachet : MonoBehaviour
                 };
 
   // teancul de carti date jos
-  string[] teancArs;
+  public string[] teancJos = new string[52];
+  public int marimeArs = 0;
 
   public string atuu;
-  public string ultimaCarte;
 
   public int marime = 52;
 
   public TMP_Text textMana;
 
-  public void Initiere(int playerNumber, GameObject[] playerOrder)
+
+  //folosit pt start - pregatire tenac carti
+  public void Initiere(int playerNumber, Player[] playerOrder)
   {
 
     Amestecare(cartiLibere, marime);
     Impartire(cartiLibere, playerNumber, playerOrder);
-    atuu = cartiLibere[marime - 1];
-    ultimaCarte = cartiLibere[marime - 2];
-    cartiLibere[marime - 2] = null;
-    marime -= 2;
+    atuu = cartiLibere[marime - 1]; 
+    teancJos[marimeArs] = cartiLibere[marime - 2];
+    cartiLibere[marime - 1] = null; cartiLibere[marime - 2] = null;
+    marime -= 2; marimeArs++;
 
   }
 
   // functie de amestecat
-  void Amestecare(string[] cartiLibere, int marime){
-    int steps = 200, i, j;
+  public void Amestecare(string[] carti, int marime){
+    int steps = 500, i, j;
     string aux;
 
     while(steps > 0){  
@@ -50,9 +52,9 @@ public class Pachet : MonoBehaviour
       j = Random.Range(0, marime);
 
       if(i != j){
-        aux = cartiLibere[i];
-        cartiLibere[i] = cartiLibere[j];
-        cartiLibere[j] = aux;
+        aux = carti[i];
+        carti[i] = carti[j];
+        carti[j] = aux;
 
         steps--;
 
@@ -62,8 +64,8 @@ public class Pachet : MonoBehaviour
 
   }
 
-  // functie de impartit
-  void Impartire(string[] cartiLibere, int playerNumber, GameObject[] playerOrder){
+  // functie de impartit carti la  playeri
+  void Impartire(string[] cartiLibere, int playerNumber, Player[] playerOrder){
     for(int i = 0; i < playerNumber; i++)
       for(int j = 0; j < 5; j++){
         playerOrder[i].GetComponent<Player>().mana[j] = cartiLibere[marime - 1];
