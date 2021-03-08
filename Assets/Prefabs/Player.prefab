@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1981408278507794662}
   - component: {fileID: 3030240432380570779}
   - component: {fileID: 4486385256880192695}
+  - component: {fileID: 3078197478328061314}
   m_Layer: 0
   m_Name: Player
   m_TagString: playerTag
@@ -56,6 +57,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -108,4 +110,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultColor: {fileID: 2100000, guid: 8079c8cda99931f449b223de3a628eaa, type: 2}
   selectedColor: {fileID: 2100000, guid: 5601b49af026b7d4fb7f5eca0d340be3, type: 2}
-  Ordine: 0
+  mana:
+  - 
+  - 
+  - 
+  - 
+  - 
+  marimeMana: 5
+--- !u!95 &3078197478328061314
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2907931605299904746}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b830933c4bebe8b45a12f6c263a80e97, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

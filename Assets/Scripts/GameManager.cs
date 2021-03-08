@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-
+    public bool enableBots;
     public GameObject playerCard, button;
     public int playerNumber = 6;
 
@@ -26,6 +26,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+      
+      enableBots = GameVariables.enableBots;
+      Debug.Log(enableBots);
       //spawneaza jucatorii
       for(int i = 0; i < playerNumber; i++)
       {
@@ -41,17 +45,33 @@ public class GameManager : MonoBehaviour
       //amestecare, impartire carti, stabilire atuu
       pachetManager.Initiere(playerNumber, playerOrder);
 
-      //initializatul cartilor si afisajul texturilor acestora din mana jucatorului curent, iar apoi butoanele lor de selectare
-      SpawnPlayerHand(); ShowHand(playerOrder[turn]); UIselectcard.UIButtons(playerOrder[turn].marimeMana);
-
       //textura primei carti de jos
       teancCarti.GetCardTexture(pachetManager.teancJos[pachetManager.marimeArs - 1], teancCarti.CarteJos);       // Instantiate(carteJos, new Vector3(0f, 1f, 0f));
       teancCarti.GetCardTexture(pachetManager.atuu, teancCarti.Atuu);
 
-      //culoarea acestuia este schimbata in cea definita pt jucatorul curent
+      //culoarea capsulei este schimbata in cea definita pt jucatorul curent
       playerOrder[turn].GetComponent<MeshRenderer>().material = playerOrder[turn].GetComponent<Player>().selectedColor;
 
-      
+
+      if(enableBots){ // joci singleplayer
+        if(turn == 0){ //e randul tau 
+          //initializatul cartilor si afisajul texturilor acestora din mana jucatorului curent, iar apoi butoanele lor de selectare
+          SpawnPlayerHand(); ShowHand(playerOrder[turn]); UIselectcard.UIButtons(playerOrder[turn].marimeMana);
+
+        }
+
+        else
+          AI();
+
+
+      }
+
+      else{ // joci multiplayer
+        //initializatul cartilor si afisajul texturilor acestora din mana jucatorului curent, iar apoi butoanele lor de selectare
+          SpawnPlayerHand(); ShowHand(playerOrder[turn]); UIselectcard.UIButtons(playerOrder[turn].marimeMana);
+
+      }
+
 
     }
     
@@ -63,14 +83,97 @@ public class GameManager : MonoBehaviour
       if(start_turn == turn)  tura++;
       PlayerColorUpdate(playerOrder, turn);
       
-      //actualizarea texturilor pentru fiecare carte din lista de carti a teancului si afisarea corespunzatoare numarului lor
-      ShowHand(playerOrder[turn]); MoveHand();
-      //actualizarea pozitiei si numarului de butoane de pe carti
-      UIselectcard.UIButtons(playerOrder[turn].marimeMana);
-      //actualizarea texturii cartii de jos
-      teancCarti.GetCardTexture(pachetManager.teancJos[pachetManager.marimeArs - 1], teancCarti.CarteJos);
-      //resetare pozitii la sf de rand
-      ResetarePozitiiCarti();
+      
+
+      if(enableBots){ // joci singleplayer
+        if(turn == 0){ //e randul tau 
+          if(tura == 1)
+            SpawnPlayerHand();
+            
+          //actualizarea texturilor pentru fiecare carte din lista de carti a teancului si afisarea corespunzatoare numarului lor
+          ShowHand(playerOrder[turn]); MoveHand();
+          //actualizarea pozitiei si numarului de butoane de pe carti
+          UIselectcard.UIButtons(playerOrder[turn].marimeMana);
+          //actualizarea texturii cartii de jos
+          teancCarti.GetCardTexture(pachetManager.teancJos[pachetManager.marimeArs - 1], teancCarti.CarteJos);
+          //resetare pozitii la sf de rand
+          ResetarePozitiiCarti();
+
+        }
+
+        else
+          AI();
+
+
+      }
+
+      else{ // joci multiplayer
+        //actualizarea texturilor pentru fiecare carte din lista de carti a teancului si afisarea corespunzatoare numarului lor
+        ShowHand(playerOrder[turn]); MoveHand();
+        //actualizarea pozitiei si numarului de butoane de pe carti
+        UIselectcard.UIButtons(playerOrder[turn].marimeMana);
+        //actualizarea texturii cartii de jos
+        teancCarti.GetCardTexture(pachetManager.teancJos[pachetManager.marimeArs - 1], teancCarti.CarteJos);
+        //resetare pozitii la sf de rand
+        ResetarePozitiiCarti();
+
+      }
+
+    }
+
+
+    void AI(){ 
+      // se uita in mana jucatorului playerOrder[turn]
+      // determina cartea sau cartile de acelasi fel cu punctajul cel mai mare si da jos
+
+      int[] punctajPeNrCarte = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // vector freq cu punctajul pe carte
+      int punctajMaxim = 0;
+      char cartePunctajMaxim = '0';
+      // bool aLuat = false;
+
+      for(int i = 0; i < playerOrder[turn].marimeMana; i++){
+        if(playerOrder[turn].mana[i] != pachetManager.atuu){
+          int val = ValoareCarte(playerOrder[turn].mana[i][0]); // face vectorul de freq
+          punctajPeNrCarte[val] += val;
+
+          if(punctajPeNrCarte[val] > punctajMaxim){   // determina cartea "maxima" curenta
+            punctajMaxim = punctajPeNrCarte[val];
+            cartePunctajMaxim = playerOrder[turn].mana[i][0];
+
+          }
+
+        }
+
+      }
+
+      if(cartePunctajMaxim == '0')
+        Claim();
+
+      if(pachetManager.marime == 0)
+        RefacereCarti();
+
+      for(int i = 0; i < playerOrder[turn].marimeMana; i++){
+        if(playerOrder[turn].mana[i][0] == cartePunctajMaxim){ 
+          MutareCarteMana_Jos(playerOrder[turn], i);  // da jos cartile "maxime"
+
+        }
+
+      }
+      
+      // ia din teanc o carte
+      Player jucator = playerOrder[turn];
+      jucator.mana[jucator.marimeMana] = pachetManager.cartiLibere[pachetManager.marime - 1]; 
+      pachetManager.cartiLibere[pachetManager.marime - 1] = null;
+      jucator.marimeMana++; pachetManager.marime--;
+
+      //jucator.anim.Play("wait");
+      NextPlayer();
+
+
+      // daca ultimaCarte < jos => ia ultimaCarte, altfel ia din pachet
+      // cand are punctaj total < 8, pentru fiecare tura jucata are o sansa mai mare sa dea claim
+      // cu cat are punctaj mai mic, cu atat are o sansa mai mare sa dea claim
+
     }
 
     void PlayerColorUpdate(Player[] playerOrder, int turn)
@@ -155,8 +258,6 @@ public class GameManager : MonoBehaviour
             teancCarti.isSelected[i] = false;
             PozitieCartiLaDeselectie(i);
           }
-
-        
 
     }
 
@@ -279,7 +380,6 @@ public class GameManager : MonoBehaviour
         UIselectcard.DisplayErrorMessage();
     }
 
-
     //apelata la sfarsitul unui rand, pentru a 'asigura' deselectarea cartilor si resetarea indicelui butonului precedent
     void ResetarePozitiiCarti()
     {
@@ -290,7 +390,6 @@ public class GameManager : MonoBehaviour
       UIselectcard.butoane[0].GetComponent<ButtonActions>().Reset();
 
     }
-
 
     //conversie char -> numar
     int ValoareCarte(char c)
@@ -305,6 +404,7 @@ public class GameManager : MonoBehaviour
       {
         if(c == 'A')    //la 10
           n = 10;
+
         else            //de la J la K
           n = c -  'A' + 11;
       }
@@ -328,7 +428,6 @@ public class GameManager : MonoBehaviour
             punctaje_jucatori[j] += ValoareCarte(jucator.mana[i][0]);   //se aduna, prin conversie
       }
     }
-
 
     public void Claim()
     {

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+
+    //public Animation anim;
     public Material defaultColor;
     public Material selectedColor;
 
