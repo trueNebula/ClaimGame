@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
 
     public int turn = 0, tura = 1, start_turn;
     float xmulti = 10f, zmulti = 8f;        //multiplicatori pt pozitia de spawnare
+    public float tura_multiplier = 0.97f, tura_multiplier_increment = 0.96f;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,6 @@ public class GameManager : MonoBehaviour
 
       
       enableBots = GameVariables.enableBots;
-      Debug.Log(enableBots);
       //spawneaza jucatorii
       for(int i = 0; i < playerNumber; i++)
       {
@@ -80,7 +80,11 @@ public class GameManager : MonoBehaviour
     {
       //calcularea pozitiei urmatorului jucator si schimbarea culorii de determinare a celui ce este la rand
       turn = (turn+1) % playerNumber;
-      if(start_turn == turn)  tura++;
+      if(start_turn == turn)
+      {  
+        tura++; 
+        tura_multiplier *= tura_multiplier_increment; //se inmulteste de fiecare data, pt a mari sansa, sunt subunitare; default: 0.92f
+      }
       PlayerColorUpdate(playerOrder, turn);
       
       
@@ -127,14 +131,19 @@ public class GameManager : MonoBehaviour
       // determina cartea sau cartile de acelasi fel cu punctajul cel mai mare si da jos
 
       int[] punctajPeNrCarte = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // vector freq cu punctajul pe carte
-      int punctajMaxim = 0;
+      int punctajMaxim = 0, totalPuncteMana = 0;
+      int ct = 0;
       char cartePunctajMaxim = '0';
       // bool aLuat = false;
 
+
+      //stabilire totalul punctelor din mana si ce numar au cartile care adunate au maximul de pct. din mana si pot fi date jos
       for(int i = 0; i < playerOrder[turn].marimeMana; i++){
-        if(playerOrder[turn].mana[i] != pachetManager.atuu){
+        if(playerOrder[turn].mana[i][0] != pachetManager.atuu[0]){
           int val = ValoareCarte(playerOrder[turn].mana[i][0]); // face vectorul de freq
           punctajPeNrCarte[val] += val;
+
+          totalPuncteMana += val;
 
           if(punctajPeNrCarte[val] > punctajMaxim){   // determina cartea "maxima" curenta
             punctajMaxim = punctajPeNrCarte[val];
@@ -146,33 +155,62 @@ public class GameManager : MonoBehaviour
 
       }
 
-      if(cartePunctajMaxim == '0')
-        Claim();
 
-      if(pachetManager.marime == 0)
-        RefacereCarti();
-
+      //determinare sansa de a da claim
+      if(totalPuncteMana <= 10)
+      {                                //pt tura 1, tura_multiplier = 0.93f, descrescator
+        int sansa = (int)(totalPuncteMana * 15 * (tura_multiplier + 0.17f));      //cu cat cartea este mai mare, cu atat mai putine numere generate de la 0 la 100 vor fi mai mici
+        if(sansa > 100) sansa = 100;      
+        Debug.Log(100 - sansa); Debug.Log(totalPuncteMana);     //minim 1 la 100 sansa
+        if(Random.Range(0, 101) >= sansa)
+          {
+            Claim();
+            return;
+          }
+      }
+      
+     
+        
+      //aruncare carti din mana
       for(int i = 0; i < playerOrder[turn].marimeMana; i++){
         if(playerOrder[turn].mana[i][0] == cartePunctajMaxim){ 
           MutareCarteMana_Jos(playerOrder[turn], i);  // da jos cartile "maxime"
-
+          ct++; //ct pt a lua a marime-ct -a carte de jos
+          i--;
         }
 
       }
-      
-      // ia din teanc o carte
-      Player jucator = playerOrder[turn];
-      jucator.mana[jucator.marimeMana] = pachetManager.cartiLibere[pachetManager.marime - 1]; 
-      pachetManager.cartiLibere[pachetManager.marime - 1] = null;
-      jucator.marimeMana++; pachetManager.marime--;
+
+
+      bool extragePachet = ValoareCarte(pachetManager.teancJos[pachetManager.marimeArs - 1 - ct][0]) <= 7;
+      if(extragePachet)
+      {
+        //ia de jos carte
+        Player jucator = playerOrder[turn];
+        jucator.mana[jucator.marimeMana] = pachetManager.teancJos[pachetManager.marimeArs - ct - 1]; //-1 - ct pt ca intai pune cartea jos, apoi o ia pe cea de sub
+        jucator.marimeMana++; pachetManager.marimeArs--;
+        pachetManager.teancJos[pachetManager.marimeArs - ct] = pachetManager.teancJos[pachetManager.marimeArs];
+        pachetManager.teancJos[pachetManager.marimeArs] = null;
+        
+      }
+      else      // ia din teanc o carte
+      {
+        if(pachetManager.marime == 0)
+          RefacereCarti();
+
+        Player jucator = playerOrder[turn];
+        jucator.mana[jucator.marimeMana] = pachetManager.cartiLibere[pachetManager.marime - 1]; 
+        pachetManager.cartiLibere[pachetManager.marime - 1] = null;
+        jucator.marimeMana++; pachetManager.marime--;
+      }
+
+
 
       //jucator.anim.Play("wait");
       NextPlayer();
 
 
-      // daca ultimaCarte < jos => ia ultimaCarte, altfel ia din pachet
-      // cand are punctaj total < 8, pentru fiecare tura jucata are o sansa mai mare sa dea claim
-      // cu cat are punctaj mai mic, cu atat are o sansa mai mare sa dea claim
+      // daca ultimaCarte < jos => ia ultimaCarte, altfel ia din pachet     -   sa o punem pt hard diff.
 
     }
 
@@ -268,6 +306,8 @@ public class GameManager : MonoBehaviour
       pachetManager.marimeArs++;
       pachetManager.atuu = null;
 
+
+      //amestecare teancJos
       pachetManager.Amestecare(pachetManager.teancJos, pachetManager.marimeArs);
 
       //reconstruire teanc de extras
@@ -285,6 +325,11 @@ public class GameManager : MonoBehaviour
       pachetManager.atuu = pachetManager.cartiLibere[pachetManager.marime - 1];
       pachetManager.cartiLibere[pachetManager.marime - 1] = null;
       pachetManager.marime--;
+
+      //pune jos urmatoarea carte
+      pachetManager.teancJos[pachetManager.marimeArs] = pachetManager.cartiLibere[pachetManager.marime - 1];
+      pachetManager.cartiLibere[pachetManager.marime - 1] = null;
+      pachetManager.marime--;   pachetManager.marimeArs++;
 
       //actualizare textura atuu
       teancCarti.GetCardTexture(pachetManager.atuu, teancCarti.Atuu);
