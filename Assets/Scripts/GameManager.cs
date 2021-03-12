@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public bool enableBots;
     public GameObject playerCard, button;
-    public int playerNumber = 6;
+    public int playerNumber;
 
     public Player[] playerOrder = new Player[6];
     public Player playerCapsule;
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+      playerNumber = GameVariables.numar_jucatori;
       
       enableBots = GameVariables.enableBots;
       //spawneaza jucatorii
@@ -155,20 +155,21 @@ public class GameManager : MonoBehaviour
 
       }
 
-
-      //determinare sansa de a da claim
-      if(totalPuncteMana <= 10)
-      {                                //pt tura 1, tura_multiplier = 0.93f, descrescator
-        int sansa = (int)(totalPuncteMana * 15 * (tura_multiplier + 0.17f));      //cu cat cartea este mai mare, cu atat mai putine numere generate de la 0 la 100 vor fi mai mici
-        if(sansa > 100) sansa = 100;      
-        Debug.Log(100 - sansa); Debug.Log(totalPuncteMana);     //minim 1 la 100 sansa
-        if(Random.Range(0, 101) >= sansa)
-          {
-            Claim();
-            return;
-          }
+      if(tura > 1)
+      {
+        //determinare sansa de a da claim
+        if(totalPuncteMana <= 10)
+        {                                //pt tura 1, tura_multiplier = 0.93f, descrescator
+          int sansa = (int)(totalPuncteMana * 15 * (tura_multiplier + 0.17f));      //cu cat cartea este mai mare, cu atat mai putine numere generate de la 0 la 100 vor fi mai mici
+          if(sansa > 100) sansa = 100;      
+          Debug.Log(100 - sansa); Debug.Log(totalPuncteMana); Debug.Log(turn + 1);     //minim 1 la 100 sansa
+          if(Random.Range(0, 101) >= sansa)
+            {
+              Claim();
+              return;
+            }
+        }
       }
-      
      
         
       //aruncare carti din mana
@@ -489,23 +490,38 @@ public class GameManager : MonoBehaviour
       //verificare castig
       bool teapa = false;
       int punctaj_apelator = punctaje_jucatori[turn];
-      int min_punctaj = 69;
+      int min_punctaj = 69, id_min_pctj = 0;
 
       for(int j = 0; j <= 5; j++)
         if(j != turn)
         {
           if(punctaje_jucatori[j] <= punctaj_apelator)  teapa = true;
-          if(min_punctaj > punctaje_jucatori[j])        min_punctaj = punctaje_jucatori[j];
+          if(min_punctaj > punctaje_jucatori[j])        
+          {
+            min_punctaj = punctaje_jucatori[j];
+            id_min_pctj = j;
+          }
         }
       
 
-      if(teapa == true);    //daca jucatorul care a dat Claim nu are cele mai putine puncte
-      //jucator [turn] umfla 50
-      else;
-      //restul umfla punctajele lor
+      if(teapa == true)    //daca jucatorul care a dat Claim nu are cele mai putine puncte
+      {
+        //jucator [turn] umfla 50
+        GameVariables.punctaje_playeri[turn] += 50;
+        GameVariables.current_winner = id_min_pctj;
+      }
+      else
+      {
+        //restul umfla punctajele lor
 
+        for(int j = 0; j <= 5; j++)
+          if(j != turn)
+            GameVariables.punctaje_playeri[j] += punctaje_jucatori[j];
+
+        GameVariables.current_winner = turn;
+      }
       //Load Victory Scene
-      SceneManager.LoadScene(2);
+      SceneManager.LoadScene("VictoryMenu");
     }
 
 }

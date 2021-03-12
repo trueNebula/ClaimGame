@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 75731617}
   - component: {fileID: 75731616}
   - component: {fileID: 75731619}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -347,7 +347,7 @@ GameObject:
   - component: {fileID: 563956685}
   - component: {fileID: 563956687}
   - component: {fileID: 563956686}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ClaimText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -619,7 +619,7 @@ GameObject:
   - component: {fileID: 1140707724}
   - component: {fileID: 1140707723}
   - component: {fileID: 1140707722}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UltimaCarteUIbutton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -766,6 +766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef53aba6704a615479ece52251ebfa53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableBots: 0
   playerCard: {fileID: 3181257604527779181, guid: 37411666a41a45c4990c17e629ffc69d,
     type: 3}
   button: {fileID: 8244946180087222811, guid: 7dbb20aeb791c3545be79398c4d6f0e7, type: 3}
@@ -786,6 +787,8 @@ MonoBehaviour:
   turn: 0
   tura: 1
   start_turn: 0
+  tura_multiplier: 0.97
+  tura_multiplier_increment: 0.96
 --- !u!4 &1246073699
 Transform:
   m_ObjectHideFlags: 0
@@ -1000,7 +1003,7 @@ GameObject:
   - component: {fileID: 1778744444}
   - component: {fileID: 1778744443}
   - component: {fileID: 1778744442}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1303,7 +1306,7 @@ GameObject:
   - component: {fileID: 2011462652}
   - component: {fileID: 2011462651}
   - component: {fileID: 2011462650}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ExtrasPachetUIbutton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
