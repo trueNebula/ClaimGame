@@ -484,7 +484,7 @@ public class GameManager : MonoBehaviour
         return;
       }
 
-
+      GameVariables.claimer = turn;
       CalcularePunctaje();
 
       //verificare castig
@@ -503,11 +503,13 @@ public class GameManager : MonoBehaviour
           }
         }
       
+      GameVariables.punctaje_adaos = new int[] {0, 0, 0, 0, 0, 0};    //resetare diferenta de punctaje
 
       if(teapa == true)    //daca jucatorul care a dat Claim nu are cele mai putine puncte
       {
         //jucator [turn] umfla 50
         GameVariables.punctaje_playeri[turn] += 50;
+        GameVariables.punctaje_adaos[turn] = 50;
         GameVariables.current_winner = id_min_pctj;
       }
       else
@@ -516,7 +518,10 @@ public class GameManager : MonoBehaviour
 
         for(int j = 0; j <= 5; j++)
           if(j != turn)
-            GameVariables.punctaje_playeri[j] += punctaje_jucatori[j];
+            {
+              GameVariables.punctaje_playeri[j] += punctaje_jucatori[j]; 
+              GameVariables.punctaje_adaos[j] = punctaje_jucatori[j];
+            }
 
         GameVariables.current_winner = turn;
       }

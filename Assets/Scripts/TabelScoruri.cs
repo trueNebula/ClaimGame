@@ -12,7 +12,7 @@ public class TabelScoruri : MonoBehaviour
 
     void Start()
     {
-        timp = 8f;
+        timp = 7f;
     }
     void OnEnable()
     {
@@ -21,19 +21,21 @@ public class TabelScoruri : MonoBehaviour
 
 
         winner.text = "The winner is: player " + (GameVariables.current_winner + 1);
+        winner.text += ". The claimer is: player " + (GameVariables.claimer + 1);
+
 
         int n = GameVariables.numar_jucatori;
         for(int i = 0; i < n; i++)
-        scoruri.text += "Player " + (i + 1) + ":" + "     " + GameVariables.punctaje_playeri[i] + "\n";
+        scoruri.text += "Player " + (i + 1) + ":" + "     " + GameVariables.punctaje_playeri[i] + " (+" + GameVariables.punctaje_adaos[i] + ")\n";
     }
 
     public void BackToGame()
     {
         timp = 0f;
         if(GameVariables.enableBots == true)
-                SceneManager.LoadScene("Singleplayer");
-            else
-                SceneManager.LoadScene("MainGame");
+            SceneManager.LoadScene("Singleplayer");
+        else
+            SceneManager.LoadScene("MainGame");
     }
 
     void Update()
