@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public bool enableBots;
     public GameObject playerCard, button;
+    public GameObject ErrorTurn;
+    GameObject turnError;
     public int playerNumber;
 
     public Player[] playerOrder = new Player[6];
@@ -23,6 +25,21 @@ public class GameManager : MonoBehaviour
     public int turn = 0, tura = 1, start_turn;
     float xmulti = 10f, zmulti = 8f;        //multiplicatori pt pozitia de spawnare
     public float tura_multiplier = 0.97f, tura_multiplier_increment = 0.96f;
+    public float timeForBotWait;
+
+
+    void Update()
+    {
+      if(timeForBotWait > -1f)
+        {timeForBotWait -= Time.deltaTime; Debug.Log(timeForBotWait);}
+
+      if(timeForBotWait < 0f && turn != 0)
+      {
+        //actualizarea texturii cartii de jos
+        teancCarti.GetCardTexture(pachetManager.teancJos[pachetManager.marimeArs - 1], teancCarti.CarteJos);
+        NextPlayer();
+      }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -75,6 +92,20 @@ public class GameManager : MonoBehaviour
 
     }
     
+
+
+    void ActualizareMana()
+    {
+      ShowHand(playerOrder[turn]); MoveHand();
+      //actualizarea pozitiei si numarului de butoane de pe carti
+      UIselectcard.UIButtons(playerOrder[turn].marimeMana);
+      //actualizarea texturii cartii de jos
+      teancCarti.GetCardTexture(pachetManager.teancJos[pachetManager.marimeArs - 1], teancCarti.CarteJos);
+      //resetare pozitii la sf de rand
+      ResetarePozitiiCarti();
+    }
+
+
     //apelat de butonul pentru urmatoarea tura
     public void NextPlayer()
     {
@@ -91,22 +122,21 @@ public class GameManager : MonoBehaviour
 
       if(enableBots){ // joci singleplayer
         if(turn == 0){ //e randul tau 
+          
           if(tura == 1)
             SpawnPlayerHand();
-            
+          
+          
           //actualizarea texturilor pentru fiecare carte din lista de carti a teancului si afisarea corespunzatoare numarului lor
-          ShowHand(playerOrder[turn]); MoveHand();
-          //actualizarea pozitiei si numarului de butoane de pe carti
-          UIselectcard.UIButtons(playerOrder[turn].marimeMana);
-          //actualizarea texturii cartii de jos
-          teancCarti.GetCardTexture(pachetManager.teancJos[pachetManager.marimeArs - 1], teancCarti.CarteJos);
-          //resetare pozitii la sf de rand
-          ResetarePozitiiCarti();
+          ActualizareMana();
 
         }
 
         else
+        {
+          timeForBotWait = 1.2f;
           AI();
+        }
 
 
       }
@@ -205,10 +235,7 @@ public class GameManager : MonoBehaviour
         jucator.marimeMana++; pachetManager.marime--;
       }
 
-
-
       //jucator.anim.Play("wait");
-      NextPlayer();
 
 
       // daca ultimaCarte < jos => ia ultimaCarte, altfel ia din pachet     -   sa o punem pt hard diff.
@@ -384,7 +411,10 @@ public class GameManager : MonoBehaviour
           }
         
       if(ok == true)  //daca exista carti selectate
+      {
+        ActualizareMana();
         NextPlayer();
+      }
       else            //nu se poate lua carte fara sa fie selectate cel putin 1 pt aruncare
         UIselectcard.DisplayErrorMessage();
     }
@@ -421,7 +451,10 @@ public class GameManager : MonoBehaviour
           }
         
       if(ok == true)  //daca exista carti selectate
+      {
+        ActualizareMana();
         NextPlayer();
+      }
       else            //nu se poate lua carte fara sa fie selectate cel putin 1 pt aruncare
         UIselectcard.DisplayErrorMessage();
     }
@@ -477,7 +510,15 @@ public class GameManager : MonoBehaviour
 
     public void Claim()
     {
+      if(turn != 0)     //daca nu esti tu, pt singleplayer(nu mai facem multi)
+      {
+        float time = 2f;
+        turnError = Instantiate(ErrorTurn) as GameObject;
+        turnError.transform.SetParent(UIselectcard.transform, false);
+        Destroy (turnError, time);
 
+        return ;
+      }
       if(tura == 1)     //nu poti da Claim prima tura
       {
         UIselectcard.DisplayClaimTurn1Message();

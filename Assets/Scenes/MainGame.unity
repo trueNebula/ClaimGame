@@ -770,6 +770,8 @@ MonoBehaviour:
   playerCard: {fileID: 3181257604527779181, guid: 37411666a41a45c4990c17e629ffc69d,
     type: 3}
   button: {fileID: 8244946180087222811, guid: 7dbb20aeb791c3545be79398c4d6f0e7, type: 3}
+  ErrorTurn: {fileID: 8260937980321767664, guid: 58ad075a5f2528545a107be6ddf75750,
+    type: 3}
   playerNumber: 6
   playerOrder:
   - {fileID: 0}
@@ -789,6 +791,7 @@ MonoBehaviour:
   start_turn: 0
   tura_multiplier: 0.97
   tura_multiplier_increment: 0.96
+  timeForBotWait: 0
 --- !u!4 &1246073699
 Transform:
   m_ObjectHideFlags: 0

@@ -31,17 +31,11 @@ public class TabelScoruri : MonoBehaviour
 
     public void BackToGame()
     {
-        timp = 0f;
-        if(GameVariables.enableBots == true)
-            SceneManager.LoadScene("Singleplayer");
-        else
-            SceneManager.LoadScene("MainGame");
+        timp = -1f;
     }
 
     void Update()
     {
-        timp -= Time.deltaTime;
-
         if(timp < 0f)   
         {
             if(GameVariables.enableBots == true)
@@ -49,5 +43,7 @@ public class TabelScoruri : MonoBehaviour
             else
                 SceneManager.LoadScene("MainGame");
         }
+
+        timp -= Time.deltaTime;
     }
 }
