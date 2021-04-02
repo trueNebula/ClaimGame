@@ -21,7 +21,9 @@ public class TabelScoruri : MonoBehaviour
 
 
         winner.text = "The winner is: player " + (GameVariables.current_winner + 1);
-        winner.text += ". The claimer is: player " + (GameVariables.claimer + 1);
+        if(GameVariables.current_winner != GameVariables.claimer)   //daca cine a dat claimcastiga, nu mai arata de 2 ori acelasi pctj.
+            winner.text += " (" + (GameVariables.punctaj_castigator) + ")";
+        winner.text += ".\nThe claimer is: player " + (GameVariables.claimer + 1) + " (" + (GameVariables.punctaj_claimer) + ").";
 
 
         int n = GameVariables.numar_jucatori;

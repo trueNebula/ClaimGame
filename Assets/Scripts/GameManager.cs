@@ -185,7 +185,7 @@ public class GameManager : MonoBehaviour
 
       }
 
-      if(tura > 1)
+      if(tura > 1)    //nu pot da claim din prima tura
       {
         //determinare sansa de a da claim
         if(totalPuncteMana <= 10)
@@ -508,7 +508,7 @@ public class GameManager : MonoBehaviour
       }
     }
 
-    public void Claim()
+    public void PlayerClaim()
     {
       if(turn != 0)     //daca nu esti tu, pt singleplayer(nu mai facem multi)
       {
@@ -525,13 +525,20 @@ public class GameManager : MonoBehaviour
         return;
       }
 
+      //daca merge sa dai claim:
+      Claim();
+    }
+
+
+    void Claim()
+    {
       GameVariables.claimer = turn;
       CalcularePunctaje();
 
       //verificare castig
       bool teapa = false;
       int punctaj_apelator = punctaje_jucatori[turn];
-      int min_punctaj = 69, id_min_pctj = 0;
+      int min_punctaj = 69, id_min_pctj = 0;    //69 = max posibil
 
       for(int j = 0; j <= 5; j++)
         if(j != turn)
@@ -566,8 +573,13 @@ public class GameManager : MonoBehaviour
 
         GameVariables.current_winner = turn;
       }
+
+      GameVariables.punctaj_claimer = punctaj_apelator;
+      GameVariables.punctaj_castigator = min_punctaj;
       //Load Victory Scene
       SceneManager.LoadScene("VictoryMenu");
     }
 
+
+  //end
 }
